@@ -107,11 +107,63 @@
     .aclose{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:2px;padding:.45rem .9rem;border-radius:8px;cursor:pointer;float:right;transition:all .15s}
     .aclose:hover{border-color:var(--muted);color:var(--text)}
     /* TOAST */
-    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border-radius:30px;transition:transform .3s;z-index:2000;white-space:nowrap}
+    .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border-radius:30px;transition:transform .3s;z-index:2000;white-space:nowrap}
     .toast.show{transform:translateX(-50%) translateY(0)}
     ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
     #sbo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;display:none}
-    @media(max-width:640px){#sidebar{position:fixed;inset:0 auto 0 0;z-index:200;transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}.mbtn{display:block}}
+
+    /* ── MOBILE BOTTOM NAV ── */
+    #mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--bg2);border-top:1px solid var(--border);z-index:100;flex-direction:row;align-items:center;justify-content:space-around;padding:0 .5rem}
+    .mnav-btn{background:transparent;border:none;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:1px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .15s;flex:1}
+    .mnav-btn .mico{font-size:1.3rem}
+    .mnav-btn.active{color:var(--red)}
+    .mnav-btn:hover{color:var(--text)}
+
+    /* ── MOBILE HISTORY DRAWER ── */
+    #hist-drawer{position:fixed;inset:0;z-index:300;display:none}
+    #hist-drawer-bg{position:absolute;inset:0;background:rgba(0,0,0,.7)}
+    #hist-drawer-panel{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-radius:16px 16px 0 0;max-height:75vh;overflow-y:auto;padding:1rem;transform:translateY(100%);transition:transform .3s ease}
+    #hist-drawer.open #hist-drawer-panel{transform:translateY(0)}
+    .drawer-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto .75rem}
+    .drawer-title{font-size:.65rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between}
+    .drawer-close{background:transparent;border:none;color:var(--muted);font-size:1rem;cursor:pointer}
+    .drawer-chat-item{padding:.65rem .75rem;border-radius:8px;cursor:pointer;border:1px solid var(--border2);margin-bottom:6px;display:flex;align-items:center;gap:.6rem;transition:background .15s}
+    .drawer-chat-item:hover,.drawer-chat-item.active{background:var(--bg3)}
+    .dci-title{font-size:.78rem;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .dci-meta{font-size:.58rem;color:var(--muted)}
+    .dci-del{background:transparent;border:none;color:var(--muted2);font-size:.75rem;cursor:pointer;padding:2px 5px}
+    .dci-del:hover{color:var(--red)}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      /* hide desktop sidebar, show mobile nav */
+      #sidebar{display:none}
+      #mobile-nav{display:flex}
+      /* push chat area above bottom nav */
+      #chatarea{padding-bottom:5rem}
+      .ibar{padding-bottom:calc(.65rem + 56px)}
+      /* bigger touch targets */
+      .iabtn,.sbtn{width:42px;height:42px}
+      .qtag{padding:5px 12px;font-size:.65rem}
+      /* caution screen mobile */
+      .ct{font-size:clamp(2rem,10vw,3.5rem);letter-spacing:3px}
+      .cbox{padding:1.2rem 1.25rem}
+      .cline{font-size:.82rem}
+      .agree-btn{width:100%;font-size:1rem;padding:.85rem}
+      /* chat bubbles mobile */
+      .mu{max-width:85%;font-size:.85rem}
+      .mb{max-width:90%}
+      .msg-meme,.mmeme{max-width:200px}
+      /* topbar mobile */
+      .mbtn{display:block}
+      .tbtitle{font-size:.68rem}
+      /* toast above nav */
+      .toast{bottom:4.5rem}
+    }
+    @media(min-width:769px){
+      #sidebar{display:flex}
+      #mobile-nav{display:none}
+    }
   </style>
 </head>
 <body>
@@ -182,6 +234,35 @@
 </div>
 
 <div id="sbo" onclick="toggleSB()"></div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div id="mobile-nav">
+  <button class="mnav-btn active" id="mnav-chat" onclick="mnavSwitch('chat')">
+    <span class="mico">💬</span>chat
+  </button>
+  <button class="mnav-btn" id="mnav-new" onclick="newChat();mnavSwitch('chat')">
+    <span class="mico">➕</span>new
+  </button>
+  <button class="mnav-btn" id="mnav-hist" onclick="openHistDrawer()">
+    <span class="mico">📜</span>history
+  </button>
+  <button class="mnav-btn" id="mnav-admin" onclick="openAdmin()" style="display:none">
+    <span class="mico">⚙️</span>admin
+  </button>
+</div>
+
+<!-- MOBILE HISTORY DRAWER -->
+<div id="hist-drawer">
+  <div id="hist-drawer-bg" onclick="closeHistDrawer()"></div>
+  <div id="hist-drawer-panel">
+    <div class="drawer-handle"></div>
+    <div class="drawer-title">
+      <span>💬 your chats</span>
+      <button class="drawer-close" onclick="closeHistDrawer()">✕</button>
+    </div>
+    <div id="drawer-chat-list"></div>
+  </div>
+</div>
 
 <!-- ADMIN PANEL -->
 <div id="ao">
@@ -274,6 +355,9 @@ function checkAdminURL(){
   const key=params.get('admin');
   if(key===ADMIN_SECRET_KEY){
     document.getElementById('admin-btn').style.display='block';
+    // also show in mobile nav
+    const mobileAdmin=document.getElementById('mnav-admin');
+    if(mobileAdmin)mobileAdmin.style.display='flex';
   }
 }
 
@@ -549,6 +633,43 @@ function setI(txt){const ta=document.getElementById('insult');ta.value=txt;ar(ta
 
 function toggleSB(){const s=document.getElementById('sidebar'),o=document.getElementById('sbo');s.classList.toggle('open');o.style.display=s.classList.contains('open')?'block':'none';}
 function closeSBMobile(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sbo').style.display='none';}
+
+// Mobile bottom nav
+function mnavSwitch(tab){
+  document.querySelectorAll('.mnav-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('mnav-'+tab);
+  if(btn)btn.classList.add('active');
+}
+
+// History drawer (mobile)
+function openHistDrawer(){
+  renderDrawerChatList();
+  const d=document.getElementById('hist-drawer');
+  d.style.display='block';
+  requestAnimationFrame(()=>d.classList.add('open'));
+}
+function closeHistDrawer(){
+  const d=document.getElementById('hist-drawer');
+  d.classList.remove('open');
+  setTimeout(()=>d.style.display='none',300);
+}
+function renderDrawerChatList(){
+  const el=document.getElementById('drawer-chat-list');
+  if(!chats.length){
+    el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:.72rem;padding:2rem;letter-spacing:2px">no chats yet 💬</div>';
+    return;
+  }
+  const today=new Date().setHours(0,0,0,0),yest=today-86400000;
+  const g={Today:[],Yesterday:[],Older:[]};
+  chats.forEach(c=>{if(c.ts>=today)g.Today.push(c);else if(c.ts>=yest)g.Yesterday.push(c);else g.Older.push(c);});
+  let h='';
+  for(const[l,items]of Object.entries(g)){
+    if(!items.length)continue;
+    h+=`<div style="font-size:.52rem;letter-spacing:3px;color:var(--muted2);text-transform:uppercase;padding:.4rem .2rem .2rem">${l}</div>`;
+    items.forEach(c=>{const a=cur&&cur.id===c.id?'active':'';h+=`<div class="drawer-chat-item ${a}" onclick="loadChat('${c.id}');closeHistDrawer();mnavSwitch('chat')"><span style="font-size:.9rem">💬</span><div style="flex:1;min-width:0"><div class="dci-title">${esc(c.title)}</div><div class="dci-meta">${c.messages.length} messages</div></div><button class="dci-del" onclick="event.stopPropagation();deleteChat('${c.id}',event)">✕</button></div>`;});
+  }
+  el.innerHTML=h;
+}
 
 function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}

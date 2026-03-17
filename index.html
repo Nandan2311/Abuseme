@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ABUSE ME 💀</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--red:#ff1744;--red-glow:rgba(255,23,68,0.18);--bg:#0a0a0a;--bg2:#111;--bg3:#181818;--bg4:#1e1e1e;--border:#222;--border2:#2e2e2e;--text:#e8e8e8;--muted:#555;--muted2:#333;--green:#00e676;--blue:#2979ff;--amber:#ffab00;--purple:#d500f9}
+    *{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+    body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;overflow:hidden}
+    /* CAUTION */
+    #caution{position:fixed;inset:0;background:#0a0a0a;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;text-align:center;overflow-y:auto;gap:1.5rem}
+    .ct{font-family:'Black Ops One',sans-serif;font-size:clamp(2.2rem,9vw,4.5rem);color:var(--red);letter-spacing:4px;line-height:1.1;text-transform:uppercase;text-shadow:3px 3px 0 #7a0000,-1px -1px 0 #ff6060;animation:glitch 4s infinite}
+    @keyframes glitch{0%,79%,100%{text-shadow:3px 3px 0 #7a0000,-1px -1px 0 #ff6060;transform:none}80%{text-shadow:-4px 0 cyan,4px 0 magenta;transform:translateX(-2px)}81%{text-shadow:4px 0 cyan,-4px 0 magenta;transform:translateX(2px)}82%{text-shadow:3px 3px 0 #7a0000;transform:none}}
+    .cbox{background:#0f0f0f;border:1.5px solid #2a2a2a;border-radius:14px;padding:1.5rem 1.75rem;max-width:560px;width:100%;text-align:left;display:flex;flex-direction:column;gap:1rem}
+    .cline{display:flex;align-items:flex-start;gap:.85rem;font-size:.88rem;color:#c0c0c0;line-height:1.7;letter-spacing:.3px}
+    .cline b{color:var(--text)}
+    .cico{font-size:1.2rem;flex-shrink:0;margin-top:.1rem}
+    .agree-btn{background:var(--red);color:#fff;font-family:'Black Ops One',sans-serif;font-size:1.2rem;letter-spacing:5px;padding:1rem 3rem;border:none;border-radius:8px;cursor:pointer;transition:all .2s;text-transform:uppercase;box-shadow:0 4px 20px rgba(255,23,68,.35)}
+    .agree-btn:hover{background:#ff4569;transform:scale(1.03);box-shadow:0 6px 28px rgba(255,23,68,.5)}
+    .clegal{max-width:560px;width:100%;text-align:center}
+    .clegal-title{font-size:.65rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:.4rem}
+    .clegal p{font-size:.62rem;color:#2a2a2a;line-height:1.8;letter-spacing:.3px}
+    /* LAYOUT */
+    #app{display:none;height:100vh;overflow:hidden;flex-direction:row}
+    /* SIDEBAR */
+    #sidebar{width:256px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s}
+    .sbh{padding:.9rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+    .sblogo{font-family:'Black Ops One',sans-serif;font-size:1rem;color:var(--red);letter-spacing:3px}
+    .ncbtn{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:5px 9px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all .15s}
+    .ncbtn:hover{border-color:var(--red);color:var(--red)}
+    .sbb{flex:1;overflow-y:auto;padding:.4rem}
+    .sbsec{font-size:.52rem;letter-spacing:3px;color:var(--muted2);text-transform:uppercase;padding:.5rem .5rem .2rem}
+    .ci2{padding:.55rem .7rem;border-radius:6px;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:.5rem;border:1px solid transparent}
+    .ci2:hover{background:var(--bg3)}.ci2.active{background:var(--bg3);border-color:var(--border2)}
+    .ci2-ico{font-size:.85rem;flex-shrink:0}
+    .ci2-txt{flex:1;min-width:0}
+    .ci2-title{font-size:.7rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ci2-meta{font-size:.55rem;color:var(--muted);margin-top:1px}
+    .ci2-del{background:transparent;border:none;color:transparent;font-size:.7rem;cursor:pointer;padding:2px 4px;border-radius:3px;flex-shrink:0;transition:all .15s}
+    .ci2:hover .ci2-del{color:var(--muted2)}.ci2-del:hover{color:var(--red)!important}
+    .sbf{padding:.7rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+    .sfbtn{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:6px 9px;border-radius:6px;cursor:pointer;transition:all .15s;text-align:left}
+    .sfbtn:hover{border-color:var(--muted);color:var(--text)}
+    /* MAIN */
+    #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    .topbar{height:46px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1rem;gap:.7rem;flex-shrink:0}
+    .mbtn{background:transparent;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;display:none;padding:4px;line-height:1}
+    .tbtitle{font-size:.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .langbadge{background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:2px 9px;font-size:.55rem;color:var(--muted);letter-spacing:1px;white-space:nowrap;flex-shrink:0}
+    .opill{display:none;align-items:center;gap:4px;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);border-radius:20px;padding:2px 9px;font-size:.55rem;color:var(--green);letter-spacing:1px;flex-shrink:0}
+    .ldot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite;flex-shrink:0}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    /* CHAT AREA */
+    #chatarea{flex:1;overflow-y:auto;padding:1.25rem 1rem;display:flex;flex-direction:column;gap:.9rem}
+    .estate{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.6rem;opacity:.35;pointer-events:none}
+    .elogo{font-family:'Black Ops One',sans-serif;font-size:2.8rem;color:var(--red);letter-spacing:6px;animation:glitch 6s infinite}
+    @keyframes glitch{0%,80%,100%{text-shadow:none}81%{text-shadow:-3px 0 cyan,3px 0 magenta}82%{text-shadow:3px 0 cyan,-3px 0 magenta}83%{text-shadow:none}}
+    .esub{font-size:.62rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase}
+    .mgroup{display:flex;flex-direction:column;gap:.45rem;animation:min .3s ease}
+    @keyframes min{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .mu{align-self:flex-end;max-width:75%;background:var(--red);color:#fff;padding:.6rem .95rem;border-radius:12px 12px 3px 12px;font-size:.88rem;line-height:1.5;word-break:break-word}
+    .mlang{align-self:flex-end;font-size:.55rem;color:var(--muted);letter-spacing:1px}
+    .mb{align-self:flex-start;max-width:80%;display:flex;flex-direction:column;gap:.45rem}
+    .mmeme{max-width:240px;width:100%;border-radius:10px;border:2px solid var(--border2);animation:pin .4s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes pin{from{transform:scale(.6) rotate(-4deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+    .mcb{background:var(--bg3);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:.6rem .95rem;font-size:.88rem;line-height:1.6;color:var(--text);word-break:break-word}
+    .mcb::before{content:'» ';color:var(--red)}
+    .mtime{font-size:.53rem;color:var(--muted2);align-self:flex-start}
+    .typing2{align-self:flex-start;background:var(--bg3);border-radius:20px;padding:.45rem .9rem;display:none}
+    .tdots{display:flex;gap:4px}
+    .tdots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bnc .8s infinite}
+    .tdots span:nth-child(2){animation-delay:.15s}.tdots span:nth-child(3){animation-delay:.3s}
+    @keyframes bnc{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+    /* INPUT BAR */
+    .ibar{border-top:1px solid var(--border);padding:.65rem .9rem;background:var(--bg);flex-shrink:0}
+    .qtags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.5rem}
+    .qtag{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:1px;padding:3px 9px;border-radius:20px;cursor:pointer;transition:all .15s;white-space:nowrap}
+    .qtag:hover{border-color:var(--red);color:var(--red)}
+    .iwrap{display:flex;align-items:flex-end;gap:.45rem;background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;padding:.45rem .45rem .45rem .75rem;transition:border-color .2s}
+    .iwrap:focus-within{border-color:var(--red)}
+    #insult{flex:1;background:transparent;border:none;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.95rem;outline:none;resize:none;line-height:1.5;max-height:120px;min-height:24px}
+    #insult::placeholder{color:#2a2a2a}
+    .iacts{display:flex;gap:.35rem;align-items:flex-end;flex-shrink:0}
+    .iabtn{background:transparent;border:1px solid var(--border2);color:var(--muted);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+    .iabtn:hover{border-color:var(--muted);color:var(--text)}
+    .iabtn.rec{border-color:var(--red);color:var(--red);animation:rp .8s infinite}
+    @keyframes rp{0%,100%{background:transparent}50%{background:var(--red-glow)}}
+    .sbtn{background:var(--red);border:none;color:#fff;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+    .sbtn:hover{background:#ff4569}.sbtn:disabled{background:var(--muted2);cursor:not-allowed}
+    /* ADMIN */
+    #ao{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+    #ap{background:var(--bg2);border:1.5px solid var(--purple);border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:1.4rem}
+    .atitle{font-family:'Black Ops One',sans-serif;font-size:1.2rem;color:var(--purple);letter-spacing:3px;margin-bottom:1rem}
+    .asec{margin-bottom:1.4rem}
+    .albl{font-size:.6rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem}
+    .ainp{width:100%;background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.85rem;padding:.6rem .85rem;border-radius:8px;outline:none;transition:border-color .2s}
+    .ainp:focus{border-color:var(--purple)}
+    .abtn2{background:var(--purple);color:#fff;font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;padding:.6rem 1.1rem;border:none;border-radius:8px;cursor:pointer;transition:all .15s;margin-top:.45rem}
+    .abtn2:hover{background:#e040fb}
+    .abtn2.danger{background:#c62828}.abtn2.danger:hover{background:#e53935}
+    .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:7px;margin-top:.65rem}
+    .mthumb{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border2);aspect-ratio:1}
+    .mthumb img{width:100%;height:100%;object-fit:cover}
+    .mdel{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.75);border:none;color:#ff6b6b;width:20px;height:20px;border-radius:4px;cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center}
+    .aclose{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:2px;padding:.45rem .9rem;border-radius:8px;cursor:pointer;float:right;transition:all .15s}
+    .aclose:hover{border-color:var(--muted);color:var(--text)}
+    /* TOAST */
+    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border-radius:30px;transition:transform .3s;z-index:2000;white-space:nowrap}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+    #sbo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;display:none}
+    @media(max-width:640px){#sidebar{position:fixed;inset:0 auto 0 0;z-index:200;transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}.mbtn{display:block}}
+  </style>
+</head>
+<body>
+
+<!-- CAUTION SCREEN -->
+<div id="caution">
+  <div class="ct">PROCEED WITH<br/>ZERO DIGNITY</div>
+  <div class="cbox">
+    <div class="cline"><span class="cico">💀</span><div><b>This app is clinically unbothered.</b> No insult has ever worked. None ever will.</div></div>
+    <div class="cline"><span class="cico">🧠</span><div><b>Side effects include:</b> ego damage, existential crisis, and the sudden urge to close the tab.</div></div>
+    <div class="cline"><span class="cico">🌍</span><div><b>Speak any language.</b> The roasting is universal. The memes are in English. Feelings are not.</div></div>
+    <div class="cline"><span class="cico">🎤</span><div><b>Voice insults accepted.</b> Crying into the mic also accepted. Equally ignored.</div></div>
+    <div class="cline"><span class="cico">📋</span><div><b>All your insults are saved.</b> For scientific purposes. And our personal entertainment.</div></div>
+    <div class="cline"><span class="cico">🏆</span><div><b>Top roasters go in the Hall of Fame.</b> It is not the honor you think it is.</div></div>
+  </div>
+  <button class="agree-btn" onclick="enterApp()">I ACCEPT THE DAMAGE 💀</button>
+  <div class="clegal">
+    <p class="clegal-title">Legal fine print nobody reads:</p>
+    <p>By clicking "I ACCEPT THE DAMAGE" you confirm that you are above 0 years old, emotionally stable (debatable), and understand that this app will not validate your feelings — now, ever, or in any parallel universe. Void where feelings exist. Side effects may include: laughing alone at your phone, sending screenshots to friends, and a deep personal reckoning with how weak your insults actually are.</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:flex">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sbh">
+      <span class="sblogo">ABUSE ME</span>
+      <button class="ncbtn" onclick="newChat()">+ new</button>
+    </div>
+    <div class="sbb" id="sbb"></div>
+    <div class="sbf">
+      <button class="sfbtn" onclick="openAdmin()">⚙ admin — manage memes</button>
+      <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:.52rem;color:var(--muted);letter-spacing:1px" id="sbstat">0 chats</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div class="topbar">
+      <button class="mbtn" onclick="toggleSB()">☰</button>
+      <span class="tbtitle" id="tbtitle">new chat</span>
+      <span class="langbadge" id="langbadge">🌍 auto</span>
+      <div class="opill" id="opill"><span class="ldot"></span><span id="onum">0</span> online</div>
+    </div>
+
+    <div id="chatarea">
+      <div class="estate" id="estate">
+        <div class="elogo">ABUSE ME</div>
+        <p class="esub">type or speak your worst 💀</p>
+        <p style="font-size:.55rem;color:var(--muted2);letter-spacing:2px;text-transform:uppercase;margin-top:.5rem">add your memes via admin panel →</p>
+      </div>
+      <div class="typing2" id="typing"><div class="tdots"><span></span><span></span><span></span></div></div>
+    </div>
+
+    <div class="ibar">
+      <div class="qtags" id="qtags"></div>
+      <div class="iwrap">
+        <textarea id="insult" placeholder="Type your worst... or tap 🎤" rows="1" oninput="ar(this)" onkeydown="hk(event)"></textarea>
+        <div class="iacts">
+          <button class="iabtn" id="micbtn" onclick="toggleMic()" title="Voice input — speak your insult">🎤</button>
+          <button class="sbtn" id="sendbtn" onclick="send()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sbo" onclick="toggleSB()"></div>
+
+<!-- ADMIN PANEL -->
+<div id="ao">
+  <div id="ap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="atitle">⚙ ADMIN</div>
+      <button class="aclose" onclick="closeAdmin()">✕ close</button>
+    </div>
+    <div id="apwd">
+      <div class="asec">
+        <div class="albl">admin password</div>
+        <input class="ainp" type="password" id="pwdinp" placeholder="enter password..." onkeydown="if(event.key==='Enter')checkPwd()"/>
+        <button class="abtn2" onclick="checkPwd()">UNLOCK 🔓</button>
+      </div>
+    </div>
+    <div id="acontent" style="display:none">
+      <div class="asec">
+        <div class="albl">add meme / gif by url</div>
+        <input class="ainp" type="url" id="murl" placeholder="https://i.imgur.com/....gif"/>
+        <input class="ainp" type="text" id="mtag" placeholder="tag: angry / sad / laugh..." style="margin-top:5px"/>
+        <button class="abtn2" onclick="addMeme()">+ ADD MEME</button>
+      </div>
+      <div class="asec">
+        <div class="albl">change password</div>
+        <input class="ainp" type="password" id="npwd" placeholder="new password..."/>
+        <button class="abtn2" onclick="changePwd()">UPDATE</button>
+      </div>
+      <div class="asec">
+        <div class="albl">your memes (<span id="mc">0</span>) — fallback GIFs used if empty</div>
+        <div class="mgrid" id="mgrid"></div>
+      </div>
+      <button class="abtn2 danger" onclick="clearMemes()" style="width:100%;margin-top:.25rem">🗑 CLEAR ALL MEMES</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="tel"></div>
+
+<script>
+const FIREBASE_CONFIG={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT_ID.firebaseapp.com",databaseURL:"https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT_ID.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+
+const CB=["Oh wow, that hurt. Said no one who has ever been bored to sleep.","I'd roast you back but my parents taught me not to burn trash.","Your insult has been received, reviewed, and immediately forgotten.","I've heard smarter things come out of a broken vending machine.","My Wi-Fi has more range than your insults.","That's cute. Did you practice that in the mirror?","I'm not ignoring you, I'm just prioritizing silence over nonsense.","The fact that you typed that, read it, and still sent it — says everything.","I've been roasted harder by a participation trophy.","Sorry, I was too busy existing at a higher level to notice that.","You must be exhausting to be around at full strength.","I would take that personally but I don't take trash seriously.","Somewhere out there, a village is missing its clown.","My level of unbothered is causing climate change at this point.","That insult had the energy of a wet napkin.","Bold of you to assume I have feelings about this.","You clearly put your whole little heart into that. How sweet.","I've been hit with better insults in a fortune cookie.","Noted. Filed under: things that didn't matter.","I'd be more offended by a yawn.","Your words have arrived. They have been placed in the bin.","That was almost intimidating. Almost.","Honey, I've been called worse by people who loved me.","You're like a background character in someone else's story.","Please continue. I need something to laugh about later.","I'd argue but I don't debate furniture.","Error 404: Feelings not found.","You tried. That counts. Kind of.","Your vibe is aggressively mid.","I've been more rattled by elevator music.","Imagine waking up every day and choosing to be like this.","You brought a rubber duck to a knife fight.","I respect the effort. I do not respect the execution.","My care level is in airplane mode.","This is adorable. You're adorable. Go sit down.","Bold move. Bold. Wrong. But bold.","That comment has the structural integrity of wet cardboard.","You had a full keyboard and that's what you went with.","Delicious attempt. Nutritionally empty.","Good effort. No impact. Better luck next apocalypse.","You speak. I hear elevator music.","The audacity. Respect. Zero results.","Something about you screams side character energy.","That was a lot of effort for absolutely nothing.","I'm immune. Inoculated by three years of internet arguments.","You're not the villain you think you are, babe.","Permission to laugh? Because this is kind of hilarious.","That insult has the shelf life of a wet tissue.","I have the emotional range of a parking cone. Still more than this deserves.","Somewhere a debate team is crying because of what you just said."];
+// Emoji reactions used as fallback when no custom memes are added
+// Once you add your own memes via admin panel, these are replaced
+const FG_EMOJI=["😂","🤣","💀","🙄","😴","🥱","😏","🤡","😬","🤦","👀","😤","🫠","💅","🫡","😮‍💨","🤭","😑"];
+const FG=[];
+const QT=[{e:"💀",t:"you are completely useless"},{e:"🤡",t:"you absolute clown"},{e:"😤",t:"you are genuinely the worst"},{e:"🗑️",t:"total disaster of a person"},{e:"🥱",t:"you are so unbearably boring"},{e:"👎",t:"this is a massive L"}];
+const LM=["absorbing damage...","processing your mediocrity...","not even flinching...","yawning internally...","preparing unbothered response...","consulting my zero-cares department...","running your insult through /dev/null...","converting your words to background noise..."];
+
+let chats=JSON.parse(localStorage.getItem('abm_chats')||'[]');
+let cur=null,memes=JSON.parse(localStorage.getItem('abm_memes')||'[]');
+let adminPwd=localStorage.getItem('abm_pwd')||'abuseme123';
+let usedCB=new Set(),isRec=false,recog=null,detLang='en',adminOK=false;
+
+function enterApp(){
+  document.getElementById('caution').style.display='none';
+  document.getElementById('app').style.display='flex';
+  initApp();
+}
+
+function initApp(){
+  renderQT();renderChatList();setupSpeech();updateSBStat();tryFB();
+  newChat();
+}
+
+function tryFB(){
+  if(FIREBASE_CONFIG.apiKey==="YOUR_API_KEY")return;
+  const s=document.createElement('script');s.type='module';
+  s.textContent=`import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";import{getDatabase,ref,onValue,set,onDisconnect,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";try{const app=initializeApp(${JSON.stringify(FIREBASE_CONFIG)});const db=getDatabase(app);const uid=localStorage.getItem('abm_uid')||(()=>{const u='u_'+Math.random().toString(36).slice(2);localStorage.setItem('abm_uid',u);return u;})();const pr=ref(db,'presence/'+uid);onValue(ref(db,'.info/connected'),s=>{if(!s.val())return;set(pr,{t:serverTimestamp()});onDisconnect(pr).remove();});onValue(ref(db,'presence'),s=>{const n=s.val()?Object.keys(s.val()).length:0;const p=document.getElementById('opill');const c=document.getElementById('onum');if(p&&c){p.style.display='flex';c.textContent=n;}});}catch(e){console.warn('FB',e);}`;
+  document.body.appendChild(s);
+}
+
+function newChat(){
+  cur={id:Date.now().toString(),title:'New chat',messages:[],ts:Date.now()};
+  renderCA();renderChatList();
+  document.getElementById('tbtitle').textContent='new chat';
+  document.getElementById('insult').focus();
+  closeSBMobile();
+}
+
+function loadChat(id){
+  const c=chats.find(x=>x.id===id);if(!c)return;
+  cur=JSON.parse(JSON.stringify(c));
+  renderCA();
+  document.getElementById('tbtitle').textContent=cur.title;
+  closeSBMobile();
+}
+
+function saveCur(){
+  if(!cur)return;
+  const i=chats.findIndex(c=>c.id===cur.id);
+  if(i>=0)chats[i]=JSON.parse(JSON.stringify(cur));
+  else chats.unshift(JSON.parse(JSON.stringify(cur)));
+  if(chats.length>50)chats=chats.slice(0,50);
+  localStorage.setItem('abm_chats',JSON.stringify(chats));
+  renderChatList();updateSBStat();
+}
+
+function deleteChat(id,e){
+  e.stopPropagation();
+  chats=chats.filter(c=>c.id!==id);
+  localStorage.setItem('abm_chats',JSON.stringify(chats));
+  if(cur&&cur.id===id){cur=null;renderCA();document.getElementById('tbtitle').textContent='new chat';}
+  renderChatList();updateSBStat();toast("deleted 🗑");
+}
+
+function renderChatList(){
+  const el=document.getElementById('sbb');
+  if(!chats.length){el.innerHTML='<div style="font-size:.6rem;color:var(--muted2);padding:.5rem;letter-spacing:1px">no chats yet</div>';return;}
+  const today=new Date().setHours(0,0,0,0),yest=today-86400000;
+  const g={Today:[],Yesterday:[],Older:[]};
+  chats.forEach(c=>{if(c.ts>=today)g.Today.push(c);else if(c.ts>=yest)g.Yesterday.push(c);else g.Older.push(c);});
+  let h='';
+  for(const[l,items]of Object.entries(g)){
+    if(!items.length)continue;
+    h+=`<div class="sbsec">${l}</div>`;
+    items.forEach(c=>{const a=cur&&cur.id===c.id?'active':'';h+=`<div class="ci2 ${a}" onclick="loadChat('${c.id}')"><span class="ci2-ico">💬</span><div class="ci2-txt"><div class="ci2-title">${esc(c.title)}</div><div class="ci2-meta">${c.messages.length} msg</div></div><button class="ci2-del" onclick="deleteChat('${c.id}',event)">✕</button></div>`;});
+  }
+  el.innerHTML=h;
+}
+
+function updateSBStat(){document.getElementById('sbstat').textContent=`${chats.length} chat${chats.length!==1?'s':''} saved`;}
+
+function renderCA(){
+  const area=document.getElementById('chatarea');
+  const estate=document.getElementById('estate');
+  const typing=document.getElementById('typing');
+  area.querySelectorAll('.mgroup').forEach(e=>e.remove());
+  if(!cur||!cur.messages.length){estate.style.display='flex';return;}
+  estate.style.display='none';
+  cur.messages.forEach(m=>area.insertBefore(buildMG(m),typing));
+  scrollBot();
+}
+
+function buildMG(m){
+  const g=document.createElement('div');g.className='mgroup';g.dataset.id=m.id;
+  const u=document.createElement('div');u.className='mu';u.textContent=m.insult;g.appendChild(u);
+  if(m.lang&&m.lang!=='en'){const ld=document.createElement('div');ld.className='mlang';ld.textContent='🌍 detected: '+m.lang;g.appendChild(ld);}
+  const b=document.createElement('div');b.className='mb';
+  if(m.meme){
+    const memeObj=typeof m.meme==='object'?m.meme:{type:'img',src:m.meme};
+    if(memeObj.type==='emoji'){
+      const emo=document.createElement('div');
+      emo.style.cssText='font-size:5rem;line-height:1;text-align:left;animation:pin .4s cubic-bezier(.34,1.56,.64,1);display:inline-block;';
+      emo.textContent=memeObj.src;b.appendChild(emo);
+    } else {
+      const img=document.createElement('img');img.className='mmeme';img.src=memeObj.src;img.alt='';img.loading='lazy';
+      img.onerror=function(){
+        const emo=document.createElement('div');
+        emo.style.cssText='font-size:5rem;line-height:1;text-align:left;';
+        emo.textContent=FG_EMOJI[Math.floor(Math.random()*FG_EMOJI.length)];
+        this.parentNode.replaceChild(emo,this);
+      };
+      b.appendChild(img);
+    }
+  }
+  const cb=document.createElement('div');cb.className='mcb';cb.textContent=m.comeback;b.appendChild(cb);
+  g.appendChild(b);
+  const t=document.createElement('div');t.className='mtime';t.textContent=new Date(m.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});g.appendChild(t);
+  return g;
+}
+
+function appendMsg(m){
+  const area=document.getElementById('chatarea');
+  const typing=document.getElementById('typing');
+  document.getElementById('estate').style.display='none';
+  area.insertBefore(buildMG(m),typing);
+  scrollBot();
+}
+
+function scrollBot(){const a=document.getElementById('chatarea');a.scrollTop=a.scrollHeight;}
+
+async function send(){
+  const ta=document.getElementById('insult');
+  const ins=ta.value.trim();if(!ins)return;
+  if(!cur){cur={id:Date.now().toString(),title:ins.slice(0,32),messages:[],ts:Date.now()};document.getElementById('tbtitle').textContent=cur.title;}
+  else if(!cur.messages.length){cur.title=ins.slice(0,32);document.getElementById('tbtitle').textContent=cur.title;}
+  ta.value='';ar(ta);
+  document.getElementById('sendbtn').disabled=true;
+  document.getElementById('estate').style.display='none';
+  const tp=document.getElementById('typing');
+  tp.style.display='block';tp.innerHTML='<div class="tdots"><span></span><span></span><span></span></div><p style="font-size:.58rem;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase">'+LM[Math.floor(Math.random()*LM.length)]+'</p>';
+  scrollBot();
+  await sleep(800+Math.random()*700);
+  const comeback=pickCB(),memeObj=pickMeme(),lang=detLang!=='en'?detLang:null;
+  const msg={id:Date.now().toString(),insult:ins,comeback,meme:memeObj,lang,ts:Date.now()};
+  cur.messages.push(msg);saveCur();
+  tp.style.display='none';tp.innerHTML='<div class="tdots"><span></span><span></span><span></span></div>';
+  appendMsg(msg);
+  document.getElementById('sendbtn').disabled=false;
+  document.getElementById('insult').focus();
+  detLang='en';document.getElementById('langbadge').textContent='🌍 auto';
+}
+
+function pickCB(){if(usedCB.size>=CB.length)usedCB.clear();let i;do{i=Math.floor(Math.random()*CB.length);}while(usedCB.has(i));usedCB.add(i);return CB[i];}
+function pickMeme(){
+  if(memes.length){return{type:'img',src:memes[Math.floor(Math.random()*memes.length)].url};}
+  return{type:'emoji',src:FG_EMOJI[Math.floor(Math.random()*FG_EMOJI.length)]};
+}
+
+function setupSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){const b=document.getElementById('micbtn');b.style.opacity='.3';b.title='Voice not supported in this browser';return;}
+  recog=new SR();recog.continuous=false;recog.interimResults=true;recog.maxAlternatives=1;recog.lang='';
+  recog.onstart=()=>{isRec=true;const b=document.getElementById('micbtn');b.classList.add('rec');b.textContent='🔴';toast("🎤 listening... say your worst");};
+  recog.onresult=(e)=>{
+    const t=Array.from(e.results).map(r=>r[0].transcript).join('');
+    document.getElementById('insult').value=t;ar(document.getElementById('insult'));
+    const lang=navigator.language||'en';detLang=lang.split('-')[0];
+    if(detLang!=='en')document.getElementById('langbadge').textContent='🌍 '+detLang;
+  };
+  recog.onerror=(e)=>{stopMic();if(e.error!=='no-speech')toast("mic error: "+e.error);};
+  recog.onend=()=>{stopMic();const v=document.getElementById('insult').value.trim();if(v)send();};
+}
+
+function toggleMic(){
+  if(!recog){toast("voice not supported in this browser 😬");return;}
+  if(isRec)recog.stop();
+  else{try{recog.start();}catch(e){toast("mic error — try again");}}
+}
+
+function stopMic(){isRec=false;const b=document.getElementById('micbtn');b.classList.remove('rec');b.textContent='🎤';}
+
+function openAdmin(){document.getElementById('ao').style.display='flex';if(adminOK){showAC();}else{document.getElementById('apwd').style.display='block';document.getElementById('acontent').style.display='none';setTimeout(()=>document.getElementById('pwdinp').focus(),100);}}
+function closeAdmin(){document.getElementById('ao').style.display='none';}
+function checkPwd(){const v=document.getElementById('pwdinp').value;if(v===adminPwd){adminOK=true;document.getElementById('pwdinp').value='';showAC();}else{toast("wrong password 🔒");document.getElementById('pwdinp').value='';}}
+function showAC(){document.getElementById('apwd').style.display='none';document.getElementById('acontent').style.display='block';renderMG();}
+function addMeme(){const url=document.getElementById('murl').value.trim(),tag=document.getElementById('mtag').value.trim();if(!url){toast("paste a URL first 🖼");return;}memes.push({url,tag:tag||'general',id:Date.now().toString()});localStorage.setItem('abm_memes',JSON.stringify(memes));document.getElementById('murl').value='';document.getElementById('mtag').value='';renderMG();toast("meme added! 🔥");}
+function deleteMeme(id){memes=memes.filter(m=>m.id!==id);localStorage.setItem('abm_memes',JSON.stringify(memes));renderMG();toast("removed 🗑");}
+function clearMemes(){if(!confirm("Delete ALL memes? Fallback GIFs will be used."))return;memes=[];localStorage.setItem('abm_memes',JSON.stringify(memes));renderMG();toast("all memes cleared");}
+function renderMG(){document.getElementById('mc').textContent=memes.length;const g=document.getElementById('mgrid');if(!memes.length){g.innerHTML='<p style="font-size:.6rem;color:var(--muted2);grid-column:1/-1;letter-spacing:1px">no memes yet — add some above!</p>';return;}g.innerHTML=memes.map(m=>`<div class="mthumb"><img src="${esc(m.url)}" alt="${esc(m.tag)}" loading="lazy" onerror="this.style.display='none';this.parentNode.style.background='#1a1a1a';this.parentNode.innerHTML+='<span style=\\'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;\\'>🖼️</span>'"/><button class="mdel" onclick="deleteMeme('${m.id}')">✕</button></div>`).join('');}
+function changePwd(){const v=document.getElementById('npwd').value.trim();if(v.length<4){toast("min 4 chars");return;}adminPwd=v;localStorage.setItem('abm_pwd',adminPwd);document.getElementById('npwd').value='';toast("password updated 🔑");}
+
+function renderQT(){document.getElementById('qtags').innerHTML=QT.map(t=>`<button class="qtag" onclick="setI(${JSON.stringify(t.t)})">${t.e}</button>`).join('');}
+function setI(txt){const ta=document.getElementById('insult');ta.value=txt;ar(ta);ta.focus();}
+
+function toggleSB(){const s=document.getElementById('sidebar'),o=document.getElementById('sbo');s.classList.toggle('open');o.style.display=s.classList.contains('open')?'block':'none';}
+function closeSBMobile(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sbo').style.display='none';}
+
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+let tt;function toast(msg){const el=document.getElementById('tel');el.textContent=msg;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2500);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAdmin();closeSBMobile();}});
+document.getElementById('ao').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
+</script>
+</body>
+</html>

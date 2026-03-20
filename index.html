@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
   <title>ABUSE ME 💀</title>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
   <style>
     :root{--red:#ff1744;--red-glow:rgba(255,23,68,0.18);--bg:#0a0a0a;--bg2:#111;--bg3:#181818;--bg4:#1e1e1e;--border:#222;--border2:#2e2e2e;--text:#e8e8e8;--muted:#555;--muted2:#333;--green:#00e676;--blue:#2979ff;--amber:#ffab00;--purple:#d500f9}
-    *{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
-    body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;overflow:hidden}
-    /* CAUTION */
-    #caution{position:fixed;inset:0;background:#0a0a0a;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;text-align:center;overflow-y:auto;gap:1.5rem}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{height:100%;height:-webkit-fill-available}
+    body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;height:100%;height:-webkit-fill-available;overflow:hidden}
+    /* CAUTION — fully scrollable on mobile */
+    #caution{position:fixed;inset:0;background:#0a0a0a;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2rem 1.25rem env(safe-area-inset-bottom);text-align:center;overflow-y:auto;overflow-x:hidden;gap:1.25rem;-webkit-overflow-scrolling:touch}
     .ct{font-family:'Black Ops One',sans-serif;font-size:clamp(2.2rem,9vw,4.5rem);color:var(--red);letter-spacing:4px;line-height:1.1;text-transform:uppercase;text-shadow:3px 3px 0 #7a0000,-1px -1px 0 #ff6060;animation:glitch 4s infinite}
     @keyframes glitch{0%,79%,100%{text-shadow:3px 3px 0 #7a0000,-1px -1px 0 #ff6060;transform:none}80%{text-shadow:-4px 0 cyan,4px 0 magenta;transform:translateX(-2px)}81%{text-shadow:4px 0 cyan,-4px 0 magenta;transform:translateX(2px)}82%{text-shadow:3px 3px 0 #7a0000;transform:none}}
     .cbox{background:#0f0f0f;border:1.5px solid #2a2a2a;border-radius:14px;padding:1.5rem 1.75rem;max-width:560px;width:100%;text-align:left;display:flex;flex-direction:column;gap:1rem}
@@ -23,7 +24,7 @@
     .clegal-title{font-size:.65rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:.4rem}
     .clegal p{font-size:.62rem;color:#2a2a2a;line-height:1.8;letter-spacing:.3px}
     /* LAYOUT */
-    #app{display:none;height:100vh;overflow:hidden;flex-direction:row}
+    #app{display:none;height:100vh;height:100dvh;overflow:hidden;flex-direction:row}
     /* SIDEBAR */
     #sidebar{width:256px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s}
     .sbh{padding:.9rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.5rem}
@@ -44,7 +45,7 @@
     .sfbtn{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:6px 9px;border-radius:6px;cursor:pointer;transition:all .15s;text-align:left}
     .sfbtn:hover{border-color:var(--muted);color:var(--text)}
     /* MAIN */
-    #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;height:100%}
     .topbar{height:46px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1rem;gap:.7rem;flex-shrink:0}
     .mbtn{background:transparent;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;display:none;padding:4px;line-height:1}
     .tbtitle{font-size:.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -137,28 +138,58 @@
     /* ── RESPONSIVE ── */
     @media(max-width:768px){
       /* hide desktop sidebar, show mobile nav */
-      #sidebar{display:none}
-      #mobile-nav{display:flex}
-      /* push chat area above bottom nav */
-      #chatarea{padding-bottom:5rem}
-      .ibar{padding-bottom:calc(.65rem + 56px)}
+      #sidebar{display:none !important}
+      #mobile-nav{display:flex !important}
+
+      /* MAIN fills full height minus bottom nav */
+      #app{height:100dvh}
+      #main{height:100%}
+      #chatarea{
+        padding-bottom:1rem;
+        padding-top:.75rem;
+        flex:1;
+        overflow-y:auto;
+      }
+
+      /* INPUT BAR — sits above bottom nav, never hidden */
+      .ibar{
+        padding:.6rem .75rem;
+        padding-bottom:calc(.6rem + 56px + env(safe-area-inset-bottom));
+        flex-shrink:0;
+        position:relative;
+        z-index:50;
+      }
+
+      /* CAUTION mobile fixes */
+      #caution{padding:1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom));justify-content:flex-start}
+      .ct{font-size:clamp(1.8rem,9vw,3rem);letter-spacing:2px;margin-top:.5rem}
+      .cbox{padding:1rem 1.1rem}
+      .cline{font-size:.8rem;gap:.65rem}
+      .cico{font-size:1rem}
+      .agree-btn{width:100%;font-size:1rem;padding:.85rem;letter-spacing:3px}
+      .clegal p{font-size:.58rem}
+
       /* bigger touch targets */
-      .iabtn,.sbtn{width:42px;height:42px}
-      .qtag{padding:5px 12px;font-size:.65rem}
-      /* caution screen mobile */
-      .ct{font-size:clamp(2rem,10vw,3.5rem);letter-spacing:3px}
-      .cbox{padding:1.2rem 1.25rem}
-      .cline{font-size:.82rem}
-      .agree-btn{width:100%;font-size:1rem;padding:.85rem}
-      /* chat bubbles mobile */
-      .mu{max-width:85%;font-size:.85rem}
-      .mb{max-width:90%}
-      .msg-meme,.mmeme{max-width:200px}
-      /* topbar mobile */
+      .iabtn,.sbtn{width:42px;height:42px;font-size:1.1rem}
+      .qtag{padding:6px 12px;font-size:.65rem}
+      .qtags{gap:6px;margin-bottom:.6rem}
+
+      /* chat bubbles */
+      .mu{max-width:88%;font-size:.88rem}
+      .mb{max-width:92%}
+      .mmeme{max-width:220px}
+
+      /* topbar */
       .mbtn{display:block}
       .tbtitle{font-size:.68rem}
+      .topbar{height:44px;padding:0 .75rem}
+
       /* toast above nav */
-      .toast{bottom:4.5rem}
+      .toast{bottom:calc(4.5rem + env(safe-area-inset-bottom))}
+
+      /* input wrap bigger */
+      #insult{font-size:1rem}
+      .iwrap{padding:.6rem .6rem .6rem .85rem}
     }
     @media(min-width:769px){
       #sidebar{display:flex}

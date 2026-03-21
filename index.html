@@ -239,6 +239,7 @@
       <button class="mbtn" onclick="toggleSB()">☰</button>
       <span class="tbtitle" id="tbtitle">new chat</span>
       <span class="langbadge" id="langbadge">🌍 auto</span>
+      <span id="global-hits" style="display:none;font-family:'Black Ops One',sans-serif;font-size:.85rem;color:var(--red);letter-spacing:1px" title="total global hits"></span>
       <div class="opill" id="opill"><span class="ldot"></span><span id="onum">0</span> online</div>
     </div>
 
@@ -277,6 +278,9 @@
   <button class="mnav-btn" id="mnav-hist" onclick="openHistDrawer()">
     <span class="mico">📜</span>history
   </button>
+  <button class="mnav-btn" id="mnav-hof" onclick="openHOF()">
+    <span class="mico">🏆</span>fame
+  </button>
   <button class="mnav-btn" id="mnav-admin" onclick="openAdmin()" style="display:none">
     <span class="mico">⚙️</span>admin
   </button>
@@ -295,7 +299,18 @@
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
+<!-- HALL OF FAME DRAWER -->
+<div id="hof-drawer" style="position:fixed;inset:0;z-index:300;display:none">
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,.7)" onclick="closeHOF()"></div>
+  <div id="hof-panel" style="position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;padding:1rem;transform:translateY(100%);transition:transform .3s ease">
+    <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto .75rem"></div>
+    <div style="font-size:.65rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between">
+      <span>🏆 hall of fame</span>
+      <button onclick="closeHOF()" style="background:transparent;border:none;color:var(--muted);font-size:1rem;cursor:pointer">✕</button>
+    </div>
+    <div id="hof-list"><div style="text-align:center;color:var(--muted);font-size:.72rem;padding:2rem;letter-spacing:2px;text-transform:uppercase">loading...</div></div>
+  </div>
+</div>
 <div id="ao">
   <div id="ap">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -339,7 +354,15 @@
 <div class="toast" id="tel"></div>
 
 <script>
-const FIREBASE_CONFIG={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT_ID.firebaseapp.com",databaseURL:"https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT_ID.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDlbi4LisNGL5-_tEHishva91AgNuEJhTs",
+  authDomain:"abuseme-be209.firebaseapp.com",
+  databaseURL:"https://abuseme-be209-default-rtdb.firebaseio.com",
+  projectId:"abuseme-be209",
+  storageBucket:"abuseme-be209.firebasestorage.app",
+  messagingSenderId:"275868640052",
+  appId:"1:275868640052:web:62a4c68491cb1b5473bb61"
+};
 
 // ─────────────────────────────────────────────
 //  🔐 ADMIN SECURITY CONFIG
@@ -407,10 +430,123 @@ function initApp(){
 
 function tryFB(){
   if(FIREBASE_CONFIG.apiKey==="YOUR_API_KEY")return;
+  const cfg=JSON.stringify(FIREBASE_CONFIG);
   const s=document.createElement('script');s.type='module';
-  s.textContent=`import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";import{getDatabase,ref,onValue,set,onDisconnect,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";try{const app=initializeApp(${JSON.stringify(FIREBASE_CONFIG)});const db=getDatabase(app);const uid=localStorage.getItem('abm_uid')||(()=>{const u='u_'+Math.random().toString(36).slice(2);localStorage.setItem('abm_uid',u);return u;})();const pr=ref(db,'presence/'+uid);onValue(ref(db,'.info/connected'),s=>{if(!s.val())return;set(pr,{t:serverTimestamp()});onDisconnect(pr).remove();});onValue(ref(db,'presence'),s=>{const n=s.val()?Object.keys(s.val()).length:0;const p=document.getElementById('opill');const c=document.getElementById('onum');if(p&&c){p.style.display='flex';c.textContent=n;}});}catch(e){console.warn('FB',e);}`;
+  s.textContent=`
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,onValue,set,onDisconnect,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import{getFirestore,collection,addDoc,updateDoc,doc,increment,onSnapshot,query,orderBy,limit,serverTimestamp as fsTS}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+try{
+  const app=getApps().length?getApps()[0]:initializeApp(${cfg});
+  const db=getDatabase(app);
+  const fs=getFirestore(app);
+  window._fs=fs;window._db=db;window._fbOK=true;
+
+  // PRESENCE — live visitor count
+  const uid=localStorage.getItem('abm_uid')||(()=>{const u='u_'+Math.random().toString(36).slice(2);localStorage.setItem('abm_uid',u);return u;})();
+  const pr=ref(db,'presence/'+uid);
+  onValue(ref(db,'.info/connected'),snap=>{
+    if(!snap.val())return;
+    set(pr,{t:serverTimestamp()});
+    onDisconnect(pr).remove();
+  });
+  onValue(ref(db,'presence'),snap=>{
+    const n=snap.val()?Object.keys(snap.val()).length:0;
+    const p=document.getElementById('opill');
+    const c=document.getElementById('onum');
+    if(p&&c){p.style.display='flex';c.textContent=n;}
+  });
+
+  // GLOBAL HIT COUNTER
+  onValue(ref(db,'totalHits'),snap=>{
+    const n=snap.val()||0;
+    const el=document.getElementById('global-hits');
+    if(el){el.textContent='💀 '+(n>=1000?(n/1000).toFixed(1)+'K':n);el.style.display='inline';}
+  });
+
+  // MEMES from Firebase — override local memes for all users
+  onSnapshot(collection(fs,'memes'),snap=>{
+    const fm=[];snap.forEach(d=>fm.push({...d.data(),id:d.id}));
+    if(fm.length)window._fbMemes=fm;
+  });
+
+  // HALL OF FAME live
+  const hofQ=query(collection(fs,'hallOfFame'),orderBy('votes','desc'),limit(10));
+  onSnapshot(hofQ,snap=>{
+    window._hofData=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(document.getElementById('hof-list'))window.renderHOF&&window.renderHOF();
+  });
+
+}catch(e){console.warn('Firebase:',e);}`;
   document.body.appendChild(s);
 }
+
+// Increment hit via REST (no module needed)
+async function fbHit(){
+  try{
+    const url=`https://${FIREBASE_CONFIG.projectId}-default-rtdb.firebaseio.com/totalHits.json`;
+    const n=await fetch(url).then(r=>r.json()).catch(()=>0);
+    await fetch(url,{method:'PUT',body:JSON.stringify((n||0)+1)});
+  }catch(e){}
+}
+
+// Add meme to Firebase
+window.fbAddMeme=async function(url,tag){
+  if(!window._fbOK||!window._fs)return false;
+  try{
+    const s=document.createElement('script');s.type='module';
+    s.textContent=`import{getFirestore,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";import{getApps}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";const fs=getFirestore(getApps()[0]);addDoc(collection(fs,'memes'),{url:${JSON.stringify(url)},tag:${JSON.stringify(tag||'general')},ts:serverTimestamp()}).then(()=>window.toast('meme saved for everyone! 🔥')).catch(e=>window.toast('save failed: '+e.message));`;
+    document.body.appendChild(s);return true;
+  }catch(e){return false;}
+};
+
+// Nominate to Hall of Fame
+window.fbNominate=async function(insult,comeback){
+  if(!window._fbOK)return;
+  const s=document.createElement('script');s.type='module';
+  s.textContent=`import{getFirestore,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";import{getApps}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";const fs=getFirestore(getApps()[0]);addDoc(collection(fs,'hallOfFame'),{insult:${JSON.stringify(insult)},comeback:${JSON.stringify(comeback)},votes:1,ts:serverTimestamp()}).then(()=>window.toast('added to hall of fame! 🏆')).catch(()=>window.toast('nomination failed'));`;
+  document.body.appendChild(s);
+};
+
+// Vote on HOF entry
+window.fbVote=async function(id){
+  const s=document.createElement('script');s.type='module';
+  s.textContent=`import{getFirestore,doc,updateDoc,increment}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";import{getApps}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";const fs=getFirestore(getApps()[0]);updateDoc(doc(fs,'hallOfFame',${JSON.stringify(id)}),{votes:increment(1)}).catch(e=>console.warn('vote:',e));`;
+  document.body.appendChild(s);
+};
+
+// Render Hall of Fame
+window.renderHOF=function(){
+  const list=document.getElementById('hof-list');
+  if(!list)return;
+  const data=window._hofData||[];
+  const voted=JSON.parse(localStorage.getItem('abm_voted')||'[]');
+  if(!data.length){list.innerHTML='<div style="text-align:center;color:var(--muted);font-size:.72rem;padding:2rem;letter-spacing:2px;text-transform:uppercase">no nominations yet — be the first! 🔥</div>';return;}
+  const medals=['🥇','🥈','🥉'];
+  list.innerHTML=data.map((d,i)=>{
+    const v=voted.includes(d.id);
+    return`<div style="background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:.85rem 1rem;display:flex;gap:.75rem;align-items:flex-start;margin-bottom:8px">
+      <div style="font-size:1.1rem;flex-shrink:0">${i<3?medals[i]:'#'+(i+1)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">"${esc(d.insult)}"</div>
+        <div style="font-size:.82rem;color:var(--text);line-height:1.5">» ${esc(d.comeback)}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+          <button onclick="hofVote('${d.id}')" style="background:transparent;border:1px solid ${v?'var(--green)':'var(--border2)'};color:${v?'var(--green)':'var(--muted)'};font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:2px 10px;border-radius:20px;cursor:pointer;transition:all .15s">${v?'✓ voted':'🔥 fire'}</button>
+          <span style="font-size:.62rem;color:var(--muted)">${d.votes||0} votes</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.hofVote=function(id){
+  const voted=JSON.parse(localStorage.getItem('abm_voted')||'[]');
+  if(voted.includes(id)){toast("already voted 😏");return;}
+  window.fbVote&&window.fbVote(id);
+  voted.push(id);
+  localStorage.setItem('abm_voted',JSON.stringify(voted));
+  setTimeout(()=>window.renderHOF&&window.renderHOF(),600);
+};
 
 function newChat(){
   cur={id:Date.now().toString(),title:'New chat',messages:[],ts:Date.now()};
@@ -524,7 +660,8 @@ async function send(){
   tp.style.display='block';tp.innerHTML='<div class="tdots"><span></span><span></span><span></span></div><p style="font-size:.58rem;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase">'+LM[Math.floor(Math.random()*LM.length)]+'</p>';
   scrollBot();
   await sleep(800+Math.random()*700);
-  if(!tenorGIFs.length) await fetchTenorGIFs(); // retry if first fetch failed
+  if(!tenorGIFs.length) await fetchTenorGIFs();
+  fbHit(); // increment global counter
   const comeback=pickCB(),memeObj=pickMeme(),lang=detLang!=='en'?detLang:null;
   const msg={id:Date.now().toString(),insult:ins,comeback,meme:memeObj,lang,ts:Date.now()};
   cur.messages.push(msg);saveCur();
@@ -537,9 +674,10 @@ async function send(){
 
 function pickCB(){if(usedCB.size>=CB.length)usedCB.clear();let i;do{i=Math.floor(Math.random()*CB.length);}while(usedCB.has(i));usedCB.add(i);return CB[i];}
 function pickMeme(){
-  // Priority: custom memes → tenor GIFs → emoji fallback
-  if(memes.length) return{type:'img',src:memes[Math.floor(Math.random()*memes.length)].url};
-  if(tenorGIFs.length) return{type:'img',src:tenorGIFs[Math.floor(Math.random()*tenorGIFs.length)]};
+  // Priority: Firebase memes → local admin memes → Tenor GIFs → emoji
+  const pool=window._fbMemes||memes;
+  if(pool.length)return{type:'img',src:pool[Math.floor(Math.random()*pool.length)].url};
+  if(tenorGIFs.length)return{type:'img',src:tenorGIFs[Math.floor(Math.random()*tenorGIFs.length)]};
   return{type:'emoji',src:FG_EMOJI[Math.floor(Math.random()*FG_EMOJI.length)]};
 }
 
@@ -597,7 +735,18 @@ function toggleMic(){
 
 function stopMic(){isRec=false;const b=document.getElementById('micbtn');b.classList.remove('rec');b.textContent='🎤';}
 
-function openAdmin(){
+// HOF drawer
+function openHOF(){
+  window.renderHOF&&window.renderHOF();
+  const d=document.getElementById('hof-drawer');
+  d.style.display='block';
+  requestAnimationFrame(()=>document.getElementById('hof-panel').style.transform='translateY(0)');
+}
+function closeHOF(){
+  document.getElementById('hof-panel').style.transform='translateY(100%)';
+  setTimeout(()=>document.getElementById('hof-drawer').style.display='none',300);
+}
+window.openHOF=openHOF;window.closeHOF=closeHOF;
   // Double check URL key is still valid
   const params=new URLSearchParams(window.location.search);
   if(params.get('admin')!==ADMIN_SECRET_KEY){toast("access denied 🔒");return;}
@@ -641,7 +790,19 @@ function checkPwd(){
   document.getElementById('cur-url').textContent=base+'?admin='+ADMIN_SECRET_KEY;
   renderMG();
 }
-function addMeme(){const url=document.getElementById('murl').value.trim(),tag=document.getElementById('mtag').value.trim();if(!url){toast("paste a URL first 🖼");return;}memes.push({url,tag:tag||'general',id:Date.now().toString()});localStorage.setItem('abm_memes',JSON.stringify(memes));document.getElementById('murl').value='';document.getElementById('mtag').value='';renderMG();toast("meme added! 🔥");}
+function addMeme(){
+  const url=document.getElementById('murl').value.trim(),tag=document.getElementById('mtag').value.trim();
+  if(!url){toast("paste a URL first 🖼");return;}
+  // Save locally
+  memes.push({url,tag:tag||'general',id:Date.now().toString()});
+  localStorage.setItem('abm_memes',JSON.stringify(memes));
+  // Save to Firebase (visible to ALL users)
+  if(window._fbOK){
+    window.fbAddMeme&&window.fbAddMeme(url,tag||'general');
+  }
+  document.getElementById('murl').value='';document.getElementById('mtag').value='';
+  renderMG();toast(window._fbOK?"meme saved globally for everyone! 🔥":"meme saved locally (connect Firebase for global) 🖼");
+}
 function deleteMeme(id){memes=memes.filter(m=>m.id!==id);localStorage.setItem('abm_memes',JSON.stringify(memes));renderMG();toast("removed 🗑");}
 function clearMemes(){if(!confirm("Delete ALL memes? Fallback GIFs will be used."))return;memes=[];localStorage.setItem('abm_memes',JSON.stringify(memes));renderMG();toast("all memes cleared");}
 function renderMG(){document.getElementById('mc').textContent=memes.length;const g=document.getElementById('mgrid');if(!memes.length){g.innerHTML='<p style="font-size:.6rem;color:var(--muted2);grid-column:1/-1;letter-spacing:1px">no memes yet — add some above!</p>';return;}g.innerHTML=memes.map(m=>`<div class="mthumb"><img src="${esc(m.url)}" alt="${esc(m.tag)}" loading="lazy" onerror="this.style.display='none';this.parentNode.style.background='#1a1a1a';this.parentNode.innerHTML+='<span style=\\'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;\\'>🖼️</span>'"/><button class="mdel" onclick="deleteMeme('${m.id}')">✕</button></div>`).join('');}

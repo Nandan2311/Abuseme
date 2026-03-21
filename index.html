@@ -218,7 +218,7 @@
 </div>
 
 <!-- MAIN APP -->
-<div id="app" style="display:flex">
+<div id="app">
 
   <!-- SIDEBAR -->
   <div id="sidebar">
@@ -747,7 +747,8 @@ function closeHOF(){
   setTimeout(()=>document.getElementById('hof-drawer').style.display='none',300);
 }
 window.openHOF=openHOF;window.closeHOF=closeHOF;
-  // Double check URL key is still valid
+
+function openAdmin(){
   const params=new URLSearchParams(window.location.search);
   if(params.get('admin')!==ADMIN_SECRET_KEY){toast("access denied 🔒");return;}
   document.getElementById('ao').style.display='flex';
